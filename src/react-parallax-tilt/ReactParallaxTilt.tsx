@@ -141,19 +141,28 @@ class ReactParallaxTilt extends PureComponent<Props> {
     const rect = this.wrapperEl.node!.getBoundingClientRect();
     this.wrapperEl.size.width = this.wrapperEl.node!.offsetWidth;
     this.wrapperEl.size.height = this.wrapperEl.node!.offsetHeight;
-    this.wrapperEl.size.left = rect.left + window.scrollX;
-    this.wrapperEl.size.top = rect.top + window.scrollY;
+    this.wrapperEl.size.left = rect.left + (this.props.fixed ? 0 : window.scrollX);
+    this.wrapperEl.size.top = rect.top + (this.props.fixed ? 0 : window.scrollY);
   }
 
   private initGlare() {
-    const { glareEnable } = this.props;
+    const { glareEnable, glareParentEl } = this.props;
 
     if (!glareEnable) {
       return;
     }
 
-    this.glare = new Glare(this.wrapperEl.size);
-    this.wrapperEl.node!.appendChild(this.glare.glareWrapperEl);
+    const useCustomParentEl: Boolean = glareParentEl?.length ? true : false;
+
+    this.glare = new Glare(this.wrapperEl.size, useCustomParentEl ? glareParentEl!.length : 1);
+
+    if (useCustomParentEl) {
+      for (let i = 0, l = glareParentEl!.length; i < l; i++) {
+        glareParentEl![i].current?.appendChild(this.glare.glareElArr[i].glareWrapperEl);
+      }
+    } else {
+      this.wrapperEl.node!.appendChild(this.glare.glareElArr[0].glareWrapperEl);
+    }
   }
 
   public mainLoop = (event: SupportedEvent) => {
@@ -219,13 +228,21 @@ class ReactParallaxTilt extends PureComponent<Props> {
 
     switch (event.type as EventType) {
       case 'mousemove':
-        this.wrapperEl.clientPosition.x = (event as MouseEvent).pageX;
-        this.wrapperEl.clientPosition.y = (event as MouseEvent).pageY;
+        this.wrapperEl.clientPosition.x = (event as MouseEvent)[
+          this.props.fixed ? 'clientX' : 'pageX'
+        ];
+        this.wrapperEl.clientPosition.y = (event as MouseEvent)[
+          this.props.fixed ? 'clientY' : 'pageY'
+        ];
         this.wrapperEl.scale = scale!;
         break;
       case 'touchmove':
-        this.wrapperEl.clientPosition.x = (event as TouchEvent).touches[0].pageX;
-        this.wrapperEl.clientPosition.y = (event as TouchEvent).touches[0].pageY;
+        this.wrapperEl.clientPosition.x = (event as TouchEvent).touches[0][
+          this.props.fixed ? 'clientX' : 'pageX'
+        ];
+        this.wrapperEl.clientPosition.y = (event as TouchEvent).touches[0][
+          this.props.fixed ? 'clientY' : 'pageY'
+        ];
         this.wrapperEl.scale = scale!;
         break;
       // jest - instance of DeviceOrientationEvent not possible
@@ -369,13 +386,15 @@ class ReactParallaxTilt extends PureComponent<Props> {
     );
 
     if (this.glare) {
-      this.glare.transitionTimeoutId = setTransition<HTMLDivElement>(
-        this.glare.glareEl,
-        'opacity',
-        transitionSpeed!,
-        transitionEasing!,
-        this.glare.transitionTimeoutId,
-      );
+      for (let i = 0, l = this.glare.glareElArr.length; i < l; i++) {
+        this.glare.glareElArr[i].transitionTimeoutId = setTransition<HTMLDivElement>(
+          this.glare.glareElArr[i].glareEl,
+          'opacity',
+          transitionSpeed!,
+          transitionEasing!,
+          this.glare.glareElArr[i].transitionTimeoutId,
+        );
+      }
     }
   }
 

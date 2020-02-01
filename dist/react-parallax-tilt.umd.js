@@ -14,19 +14,20 @@ var e, t;
             for (var n in t) t.hasOwnProperty(n) && (e[n] = t[n]);
           })(e, t);
       },
-      i = function() {
-        return (i =
+      r = function() {
+        return (r =
           Object.assign ||
           function(e) {
-            for (var t, n = 1, i = arguments.length; n < i; n++)
-              for (var r in (t = arguments[n]))
-                Object.prototype.hasOwnProperty.call(t, r) && (e[r] = t[r]);
+            for (var t, n = 1, r = arguments.length; n < r; n++)
+              for (var i in (t = arguments[n]))
+                Object.prototype.hasOwnProperty.call(t, i) && (e[i] = t[i]);
             return e;
           }).apply(this, arguments);
       },
-      r = i(
-        i(
+      i = r(
+        r(
           {
+            fixed: !1,
             scale: 1,
             perspective: 1e3,
             flipVertically: !1,
@@ -55,17 +56,17 @@ var e, t;
           glareReverse: !1,
         },
       );
-    function a(e, t, n, i, r) {
+    function l(e, t, n, r, i) {
       return (
-        void 0 === r && (r = null),
-        r && clearTimeout(r),
-        (e.style.transition = t + ' ' + n + 'ms ' + i),
+        void 0 === i && (i = null),
+        i && clearTimeout(i),
+        (e.style.transition = t + ' ' + n + 'ms ' + r),
         setTimeout(function() {
           e.style.transition = '';
         }, n)
       );
     }
-    function l(e, t, n) {
+    function a(e, t, n) {
       return Math.min(Math.max(e, t), n);
     }
     var o = 90,
@@ -84,21 +85,21 @@ var e, t;
               e.updateTiltLimits(n);
           }),
           (this.updateTilt = function(t, n) {
-            var i = t.yPercentage,
-              r = n.tiltMaxAngleY;
+            var r = t.yPercentage,
+              i = n.tiltMaxAngleY;
             (e.tiltAngleX = (t.xPercentage * n.tiltMaxAngleX) / 100),
-              (e.tiltAngleY = ((i * r) / 100) * -1);
+              (e.tiltAngleY = ((r * i) / 100) * -1);
           }),
           (this.updateTiltManualInput = function(t, n) {
-            var i = n.tiltAngleXManual,
-              r = n.tiltAngleYManual,
-              a = n.tiltMaxAngleX,
-              l = n.tiltMaxAngleY;
-            (null === i && null === r) ||
-              ((e.tiltAngleX = null !== i ? i : 0),
-              (e.tiltAngleY = null !== r ? r : 0),
-              (t.xPercentage = (100 * e.tiltAngleX) / a),
-              (t.yPercentage = (100 * e.tiltAngleY) / l));
+            var r = n.tiltAngleXManual,
+              i = n.tiltAngleYManual,
+              l = n.tiltMaxAngleX,
+              a = n.tiltMaxAngleY;
+            (null === r && null === i) ||
+              ((e.tiltAngleX = null !== r ? r : 0),
+              (e.tiltAngleY = null !== i ? i : 0),
+              (t.xPercentage = (100 * e.tiltAngleX) / l),
+              (t.yPercentage = (100 * e.tiltAngleY) / a));
           }),
           (this.updateTiltReverse = function(t) {
             var n = t.tiltReverse ? -1 : 1;
@@ -106,8 +107,8 @@ var e, t;
           }),
           (this.updateTiltLimits = function(t) {
             var n = t.tiltAxis;
-            (e.tiltAngleX = l(e.tiltAngleX, -o, o)),
-              (e.tiltAngleY = l(e.tiltAngleY, -o, o)),
+            (e.tiltAngleX = a(e.tiltAngleX, -o, o)),
+              (e.tiltAngleY = a(e.tiltAngleY, -o, o)),
               n &&
                 ((e.tiltAngleX = 'x' === n ? e.tiltAngleX : 0),
                 (e.tiltAngleY = 'y' === n ? e.tiltAngleY : 0));
@@ -123,90 +124,108 @@ var e, t;
           });
       },
       p = 2,
-      c = function(e) {
-        var t = this;
-        (this.glareAngle = 0),
+      c = function(e, t) {
+        var n = this;
+        void 0 === t && (t = 1),
+          (this.glareElArr = []),
+          (this.glareAngle = 0),
           (this.glareOpacity = 0),
           (this.calculateGlareSize = function(e) {
-            return { width: e.width * p, height: e.height * p };
+            var t = p * Math.max(e.width, e.height);
+            return { width: t, height: t };
           }),
           (this.setSize = function(e) {
-            var n = t.calculateGlareSize(e);
-            (t.glareEl.style.width = n.width + 'px'), (t.glareEl.style.height = n.height + 'px');
+            for (var t = n.calculateGlareSize(e), r = 0, i = n.glareElArr.length; r < i; r++)
+              (n.glareElArr[r].glareEl.style.width = t.width + 'px'),
+                (n.glareElArr[r].glareEl.style.height = t.height + 'px');
           }),
-          (this.update = function(e, n, i, r) {
-            t.updateAngle(e, n.glareReverse), t.updateOpacity(e, n, i, r);
+          (this.update = function(e, t, r, i) {
+            n.updateAngle(e, t.glareReverse), n.updateOpacity(e, t, r, i);
           }),
-          (this.updateAngle = function(e, n) {
-            var i = e.xPercentage,
-              r = 180 / Math.PI,
-              a = i ? Math.atan2(e.yPercentage, -i) * r : 0;
-            t.glareAngle = a - (n ? 180 : 0);
+          (this.updateAngle = function(e, t) {
+            var r = e.xPercentage,
+              i = 180 / Math.PI,
+              l = r ? Math.atan2(e.yPercentage, -r) * i : 0;
+            n.glareAngle = l - (t ? 180 : 0);
           }),
-          (this.updateOpacity = function(e, n, i, r) {
-            var a,
+          (this.updateOpacity = function(e, t, r, i) {
+            var l,
               o = e.xPercentage,
               s = e.yPercentage,
-              p = n.glareReverse,
-              c = n.glareMaxOpacity,
-              g = i ? -1 : 1,
-              u = r ? -1 : 1;
-            switch (n.glarePosition) {
+              p = t.glareReverse,
+              c = t.glareMaxOpacity,
+              g = r ? -1 : 1,
+              d = i ? -1 : 1;
+            switch (t.glarePosition) {
               case 'top':
-                a = -o * g;
+                l = -o * g;
                 break;
               case 'right':
-                a = s * u;
+                l = s * d;
                 break;
               case 'bottom':
-                a = o * g;
+                l = o * g;
                 break;
               case 'left':
-                a = -s * u;
+                l = -s * d;
                 break;
               case 'all':
-                a = Math.hypot(o, s);
+                l = Math.hypot(o, s);
                 break;
               default:
-                a = o * g;
+                l = o * g;
             }
-            var d = l((a = p ? -a : a), 0, 100);
-            t.glareOpacity = (d * c) / 100;
+            var u = a((l = p ? -l : l), 0, 100);
+            n.glareOpacity = (u * c) / 100;
           }),
           (this.render = function(e) {
-            var n = e.glareColor;
-            (t.glareEl.style.transform = 'rotate(' + t.glareAngle + 'deg) translate(-50%, -50%)'),
-              (t.glareEl.style.opacity = t.glareOpacity.toString()),
-              (t.glareEl.style.background =
-                'linear-gradient(0deg, rgba(255,255,255,0) 0%, ' + n + ' 100%)');
-          }),
-          (this.glareWrapperEl = document.createElement('div')),
-          (this.glareEl = document.createElement('div')),
-          this.glareWrapperEl.appendChild(this.glareEl),
-          (this.glareWrapperEl.className = 'glare-wrapper'),
-          (this.glareEl.className = 'glare');
-        var n = this.calculateGlareSize(e),
-          i = {
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            'transform-origin': '0% 0%',
-            'pointer-events': 'none',
-            width: n.width + 'px',
-            height: n.height + 'px',
-          };
-        Object.assign(this.glareWrapperEl.style, {
-          position: 'absolute',
-          top: '0',
-          left: '0',
-          width: '100%',
-          height: '100%',
-          overflow: 'hidden',
-        }),
-          Object.assign(this.glareEl.style, i);
+            for (
+              var t = 'linear-gradient(0deg, rgba(255,255,255,0) 0%, ' + e.glareColor + ' 100%)',
+                r = 0,
+                i = n.glareElArr.length;
+              r < i;
+              r++
+            )
+              (n.glareElArr[r].glareEl.style.transform =
+                'rotate(' + n.glareAngle + 'deg) translate(-50%, -50%)'),
+                (n.glareElArr[r].glareEl.style.opacity = n.glareOpacity.toString()),
+                (n.glareElArr[r].glareEl.style.background = t);
+          });
+        for (
+          var r = {
+              position: 'absolute',
+              top: '0',
+              left: '0',
+              width: '100%',
+              height: '100%',
+              overflow: 'hidden',
+            },
+            i = this.calculateGlareSize(e),
+            l = {
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              'transform-origin': '0% 0%',
+              'pointer-events': 'none',
+              width: i.width + 'px',
+              height: i.height + 'px',
+            },
+            o = 0;
+          o < t;
+          o++
+        ) {
+          var s = document.createElement('div'),
+            c = document.createElement('div');
+          s.appendChild(c),
+            (s.className = 'glare-wrapper'),
+            (c.className = 'glare'),
+            Object.assign(s.style, r),
+            Object.assign(c.style, l),
+            this.glareElArr.push({ glareEl: c, glareWrapperEl: s, transitionTimeoutId: void 0 });
+        }
       };
     return (function(e) {
-      function i() {
+      function r() {
         var t = (null !== e && e.apply(this, arguments)) || this;
         return (
           (t.wrapperEl = {
@@ -253,38 +272,39 @@ var e, t;
           (t.onMove = function(e) {
             t.mainLoop(e);
             var n = t.props.onMove,
-              i = 0,
-              r = 0;
-            t.glare && ((i = t.glare.glareAngle), (r = t.glare.glareOpacity)),
+              r = 0,
+              i = 0;
+            t.glare && ((r = t.glare.glareAngle), (i = t.glare.glareOpacity)),
               n &&
                 n(
                   t.tilt.tiltAngleX,
                   t.tilt.tiltAngleY,
                   t.tilt.tiltAngleXPercentage,
                   t.tilt.tiltAngleYPercentage,
-                  i,
                   r,
+                  i,
                   e.type,
                 );
           }),
           (t.onLeave = function(e) {
             var n = t.props.onLeave;
             if ((t.setTransition(), n && n(e.type), t.props.reset)) {
-              var i = new CustomEvent('autoreset');
-              t.onMove(i);
+              var r = new CustomEvent('autoreset');
+              t.onMove(r);
             }
           }),
           (t.processInput = function(e) {
             var n = t.props.scale;
             switch (e.type) {
               case 'mousemove':
-                (t.wrapperEl.clientPosition.x = e.pageX),
-                  (t.wrapperEl.clientPosition.y = e.pageY),
+                (t.wrapperEl.clientPosition.x = e[t.props.fixed ? 'clientX' : 'pageX']),
+                  (t.wrapperEl.clientPosition.y = e[t.props.fixed ? 'clientY' : 'pageY']),
                   (t.wrapperEl.scale = n);
                 break;
               case 'touchmove':
-                (t.wrapperEl.clientPosition.x = e.touches[0].pageX),
-                  (t.wrapperEl.clientPosition.y = e.touches[0].pageY),
+                (t.wrapperEl.clientPosition.x = e.touches[0][t.props.fixed ? 'clientX' : 'pageX']),
+                  (t.wrapperEl.clientPosition.y =
+                    e.touches[0][t.props.fixed ? 'clientY' : 'pageY']),
                   (t.wrapperEl.scale = n);
                 break;
               case 'deviceorientation':
@@ -299,16 +319,16 @@ var e, t;
           (t.processInputDeviceOrientation = function(e) {
             if (e.gamma && e.beta && t.props.gyroscope) {
               var n = t.props,
-                i = n.tiltMaxAngleY,
-                r = e.gamma;
+                r = n.tiltMaxAngleY,
+                i = e.gamma;
               (t.wrapperEl.clientPosition.xPercentage = (e.beta / n.tiltMaxAngleX) * 100),
-                (t.wrapperEl.clientPosition.yPercentage = (r / i) * 100),
-                (t.wrapperEl.clientPosition.xPercentage = l(
+                (t.wrapperEl.clientPosition.yPercentage = (i / r) * 100),
+                (t.wrapperEl.clientPosition.xPercentage = a(
                   t.wrapperEl.clientPosition.xPercentage,
                   -100,
                   100,
                 )),
-                (t.wrapperEl.clientPosition.yPercentage = l(
+                (t.wrapperEl.clientPosition.yPercentage = a(
                   t.wrapperEl.clientPosition.yPercentage,
                   -100,
                   100,
@@ -317,32 +337,32 @@ var e, t;
           }),
           (t.update = function(e) {
             var n = t.props,
-              i = n.tiltEnable,
-              r = n.flipVertically,
-              a = n.flipHorizontally;
+              r = n.tiltEnable,
+              i = n.flipVertically,
+              l = n.flipHorizontally;
             t.updateClientInput(e),
-              i && t.tilt.update(t.wrapperEl.clientPosition, t.props),
+              r && t.tilt.update(t.wrapperEl.clientPosition, t.props),
               t.updateFlip(),
               t.tilt.updateTiltAnglesPercentage(t.props),
-              t.glare && t.glare.update(t.wrapperEl.clientPosition, t.props, r, a);
+              t.glare && t.glare.update(t.wrapperEl.clientPosition, t.props, i, l);
           }),
           (t.updateClientInput = function(e) {
             if ('autoreset' !== e && 'deviceorientation' !== e) {
-              var n, i;
+              var n, r;
               if (t.props.trackOnWindow) {
-                var r = t.wrapperEl.clientPosition,
-                  a = r.x;
-                (n = (r.y / window.innerHeight) * 200 - 100),
-                  (i = (a / window.innerWidth) * 200 - 100);
+                var i = t.wrapperEl.clientPosition,
+                  l = i.x;
+                (n = (i.y / window.innerHeight) * 200 - 100),
+                  (r = (l / window.innerWidth) * 200 - 100);
               } else {
                 var o = t.wrapperEl,
                   s = o.size,
                   p = o.clientPosition;
                 (n = ((p.y - s.top) / s.height) * 200 - 100),
-                  (i = (((a = p.x) - s.left) / s.width) * 200 - 100);
+                  (r = (((l = p.x) - s.left) / s.width) * 200 - 100);
               }
-              (t.wrapperEl.clientPosition.xPercentage = l(n, -100, 100)),
-                (t.wrapperEl.clientPosition.yPercentage = l(i, -100, 100));
+              (t.wrapperEl.clientPosition.xPercentage = a(n, -100, 100)),
+                (t.wrapperEl.clientPosition.yPercentage = a(r, -100, 100));
             }
           }),
           (t.updateFlip = function() {
@@ -363,13 +383,13 @@ var e, t;
       }
       return (
         (function(e, t) {
-          function i() {
+          function r() {
             this.constructor = e;
           }
           n(e, t),
-            (e.prototype = null === t ? Object.create(t) : ((i.prototype = t.prototype), new i()));
-        })(i, e),
-        (i.prototype.componentDidMount = function() {
+            (e.prototype = null === t ? Object.create(t) : ((r.prototype = t.prototype), new r()));
+        })(r, e),
+        (r.prototype.componentDidMount = function() {
           this.loadWrapperAndChildElements(),
             (this.tilt = new s()),
             this.initGlare(),
@@ -377,20 +397,20 @@ var e, t;
           var e = new CustomEvent('autoreset');
           this.mainLoop(e);
         }),
-        (i.prototype.componentWillUnmount = function() {
+        (r.prototype.componentWillUnmount = function() {
           clearTimeout(this.wrapperEl.transitionTimeoutId),
             null !== this.wrapperEl.updateAnimationId &&
               cancelAnimationFrame(this.wrapperEl.updateAnimationId),
             this.removeEventListeners();
         }),
-        (i.prototype.componentDidUpdate = function() {
+        (r.prototype.componentDidUpdate = function() {
           var e = this.props;
           if (!(e.onMove || e.onEnter || e.onLeave)) {
             var t = new CustomEvent('propchange');
             this.mainLoop(t);
           }
         }),
-        (i.prototype.addEventListeners = function() {
+        (r.prototype.addEventListeners = function() {
           var e = this.props,
             t = e.trackOnWindow,
             n = e.gyroscope;
@@ -410,7 +430,7 @@ var e, t;
             window.addEventListener('deviceorientation', this.onMove);
           }
         }),
-        (i.prototype.removeEventListeners = function() {
+        (r.prototype.removeEventListeners = function() {
           var e = this.props,
             t = e.trackOnWindow,
             n = e.gyroscope;
@@ -426,49 +446,62 @@ var e, t;
               window.DeviceOrientationEvent &&
               window.removeEventListener('deviceorientation', this.onMove);
         }),
-        (i.prototype.setWrapperElSize = function() {
+        (r.prototype.setWrapperElSize = function() {
           var e = this.wrapperEl.node.getBoundingClientRect();
           (this.wrapperEl.size.width = this.wrapperEl.node.offsetWidth),
             (this.wrapperEl.size.height = this.wrapperEl.node.offsetHeight),
-            (this.wrapperEl.size.left = e.left + window.scrollX),
-            (this.wrapperEl.size.top = e.top + window.scrollY);
+            (this.wrapperEl.size.left = e.left + (this.props.fixed ? 0 : window.scrollX)),
+            (this.wrapperEl.size.top = e.top + (this.props.fixed ? 0 : window.scrollY));
         }),
-        (i.prototype.initGlare = function() {
-          this.props.glareEnable &&
-            ((this.glare = new c(this.wrapperEl.size)),
-            this.wrapperEl.node.appendChild(this.glare.glareWrapperEl));
+        (r.prototype.initGlare = function() {
+          var e,
+            t,
+            n = this.props,
+            r = n.glareParentEl;
+          if (n.glareEnable) {
+            var i = !(null === (e = r) || void 0 === e || !e.length);
+            if (((this.glare = new c(this.wrapperEl.size, i ? r.length : 1)), i))
+              for (var l = 0, a = r.length; l < a; l++)
+                null === (t = r[l].current) ||
+                  void 0 === t ||
+                  t.appendChild(this.glare.glareElArr[l].glareWrapperEl);
+            else this.wrapperEl.node.appendChild(this.glare.glareElArr[0].glareWrapperEl);
+          }
         }),
-        (i.prototype.resetWrapperElTransform = function() {
+        (r.prototype.resetWrapperElTransform = function() {
           this.wrapperEl.node.style.transform = '';
         }),
-        (i.prototype.renderPerspective = function() {
+        (r.prototype.renderPerspective = function() {
           this.wrapperEl.node.style.transform += 'perspective(' + this.props.perspective + 'px) ';
         }),
-        (i.prototype.renderScale = function() {
+        (r.prototype.renderScale = function() {
           var e = this.wrapperEl.scale;
           this.wrapperEl.node.style.transform += 'scale3d(' + e + ',' + e + ',' + e + ')';
         }),
-        (i.prototype.setTransition = function() {
+        (r.prototype.setTransition = function() {
           var e = this.props,
             t = e.transitionSpeed,
             n = e.transitionEasing;
-          (this.wrapperEl.transitionTimeoutId = a(
-            this.wrapperEl.node,
-            'all',
-            t,
-            n,
-            this.wrapperEl.transitionTimeoutId,
-          )),
-            this.glare &&
-              (this.glare.transitionTimeoutId = a(
-                this.glare.glareEl,
+          if (
+            ((this.wrapperEl.transitionTimeoutId = l(
+              this.wrapperEl.node,
+              'all',
+              t,
+              n,
+              this.wrapperEl.transitionTimeoutId,
+            )),
+            this.glare)
+          )
+            for (var r = 0, i = this.glare.glareElArr.length; r < i; r++)
+              this.glare.glareElArr[r].transitionTimeoutId = l(
+                this.glare.glareElArr[r].glareEl,
                 'opacity',
                 t,
                 n,
-                this.glare.transitionTimeoutId,
-              ));
+                this.glare.glareElArr[r].transitionTimeoutId,
+              );
         }),
-        (i.prototype.render = function() {
+        (r.prototype.render = function() {
           var e = this,
             n = this.props;
           return t.createElement(
@@ -489,8 +522,8 @@ var e, t;
             n.children,
           );
         }),
-        (i.defaultProps = r),
-        i
+        (r.defaultProps = i),
+        r
       );
     })(e.PureComponent);
   }),

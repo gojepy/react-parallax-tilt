@@ -1,4 +1,4 @@
-import { GlareProps, GlareSize } from './types';
+import { GlareProps, GlareSize, GlareElements } from './types';
 import { constrainToRange } from '../../common/utils';
 import { ElementSizePosition, ClientPosition } from '../../common/types';
 import { IStyle } from '../../common/IStyle';
@@ -6,21 +6,12 @@ import { IStyle } from '../../common/IStyle';
 const GLARE_EL_SIZE_FACTOR = 2;
 
 export class Glare implements IStyle {
-  public glareWrapperEl: HTMLDivElement;
-  public glareEl: HTMLDivElement;
+  public glareElArr: Array<GlareElements> = [];
 
   public glareAngle: number = 0;
   public glareOpacity: number = 0;
 
-  public transitionTimeoutId: number | undefined;
-
-  constructor(wrapperElSize: ElementSizePosition) {
-    this.glareWrapperEl = document.createElement('div');
-    this.glareEl = document.createElement('div');
-    this.glareWrapperEl.appendChild(this.glareEl);
-    this.glareWrapperEl.className = 'glare-wrapper';
-    this.glareEl.className = 'glare';
-
+  constructor(wrapperElSize: ElementSizePosition, elCount: Number = 1) {
     const styleGlareWrapper = {
       position: 'absolute',
       top: '0',
@@ -41,21 +32,38 @@ export class Glare implements IStyle {
       height: `${glareSize.height}px`,
     };
 
-    Object.assign(this.glareWrapperEl.style, styleGlareWrapper);
-    Object.assign(this.glareEl.style, styleGlare);
+    for (let i = 0; i < elCount; i++) {
+      const glareWrapperEl = document.createElement('div');
+      const glareEl = document.createElement('div');
+      glareWrapperEl.appendChild(glareEl);
+      glareWrapperEl.className = 'glare-wrapper';
+      glareEl.className = 'glare';
+
+      Object.assign(glareWrapperEl.style, styleGlareWrapper);
+      Object.assign(glareEl.style, styleGlare);
+
+      this.glareElArr.push({
+        glareEl,
+        glareWrapperEl,
+        transitionTimeoutId: undefined,
+      });
+    }
   }
 
   private calculateGlareSize = (wrapperElSize: ElementSizePosition): GlareSize => {
+    const s = GLARE_EL_SIZE_FACTOR * Math.max(wrapperElSize.width!, wrapperElSize.height!);
     return {
-      width: wrapperElSize.width! * GLARE_EL_SIZE_FACTOR,
-      height: wrapperElSize.height! * GLARE_EL_SIZE_FACTOR,
+      width: s,
+      height: s,
     };
   };
 
   public setSize = (wrapperElSize: ElementSizePosition): void => {
     const glareSize = this.calculateGlareSize(wrapperElSize);
-    this.glareEl.style.width = `${glareSize.width}px`;
-    this.glareEl.style.height = `${glareSize.height}px`;
+    for (let i = 0, l = this.glareElArr.length; i < l; i++) {
+      this.glareElArr[i].glareEl.style.width = `${glareSize.width}px`;
+      this.glareElArr[i].glareEl.style.height = `${glareSize.height}px`;
+    }
   };
 
   public update = (
@@ -119,10 +127,13 @@ export class Glare implements IStyle {
 
   public render = (props: GlareProps): void => {
     const { glareColor } = props;
-    this.glareEl.style.transform = `rotate(${this.glareAngle}deg) translate(-50%, -50%)`;
-    this.glareEl.style.opacity = this.glareOpacity.toString();
-
     const linearGradient: string = `linear-gradient(0deg, rgba(255,255,255,0) 0%, ${glareColor} 100%)`;
-    this.glareEl.style.background = linearGradient;
+    for (let i = 0, l = this.glareElArr.length; i < l; i++) {
+      this.glareElArr[
+        i
+      ].glareEl.style.transform = `rotate(${this.glareAngle}deg) translate(-50%, -50%)`;
+      this.glareElArr[i].glareEl.style.opacity = this.glareOpacity.toString();
+      this.glareElArr[i].glareEl.style.background = linearGradient;
+    }
   };
 }

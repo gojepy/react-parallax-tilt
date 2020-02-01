@@ -3,6 +3,7 @@ import { defaultTiltProps } from '../features/tilt/defaultProps';
 import { defaultGlareProps } from '../features/glare/defaultProps';
 
 export const defaultProps: Props = {
+  fixed: false,
   scale: 1,
   perspective: 1000,
   flipVertically: false,

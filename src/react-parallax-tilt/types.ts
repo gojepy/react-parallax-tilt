@@ -6,6 +6,10 @@ import { ElementSizePosition, ClientPosition } from '../common/types';
 
 export interface Props extends TiltProps, GlareProps, React.HTMLAttributes<HTMLDivElement> {
   /**
+   * Use viewport position instead of page.
+   */
+  fixed?: boolean;
+  /**
    * Scale of the component (1.5 = 150%, 2 = 200%, etc.).
    */
   scale?: number;

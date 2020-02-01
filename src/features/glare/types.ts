@@ -1,3 +1,5 @@
+import { RefObject } from 'react';
+
 export type GlareProps = {
   /**
    * Boolean to enable/disable glare effect.
@@ -19,6 +21,10 @@ export type GlareProps = {
    * Reverse the glare direction.
    */
   glareReverse?: boolean;
+  /**
+   * Set the glare parent element
+   */
+  glareParentEl?: Array<RefObject<HTMLElement>>;
 };
 
 export type GlarePosition = 'top' | 'right' | 'bottom' | 'left' | 'all';
@@ -26,4 +32,10 @@ export type GlarePosition = 'top' | 'right' | 'bottom' | 'left' | 'all';
 export type GlareSize = {
   width: number;
   height: number;
+};
+
+export type GlareElements = {
+  glareEl: HTMLDivElement;
+  glareWrapperEl: HTMLDivElement;
+  transitionTimeoutId: number | undefined;
 };
