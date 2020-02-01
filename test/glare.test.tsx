@@ -132,9 +132,9 @@ describe("Glare - angle/opacity - Callback 'onMove' should return correct calcul
     );
     const wrapperElSize: ElementSizePosition = { width: 150, height: 100, left: 0, top: 0 };
     wrapper.instance()['glare'].setSize(wrapperElSize);
-    const glareStyle = wrapper.instance()['glare'].glareEl.style;
+    const glareStyle = wrapper.instance()['glare'].glareElArr[0].glareEl.style;
     expect(glareStyle.width).toEqual('300px');
-    expect(glareStyle.height).toEqual('200px');
+    expect(glareStyle.height).toEqual('300px');
   });
 
   it('Glare with flip vertically/horizontally', () => {

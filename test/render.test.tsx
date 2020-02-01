@@ -41,7 +41,7 @@ describe('Render', () => {
     );
     wrapper.simulate('mousemove');
     wrapper.instance().renderFrame();
-    const glareStyle = wrapper.instance()['glare'].glareEl.style;
+    const glareStyle = wrapper.instance()['glare'].glareElArr[0].glareEl.style;
     expect(glareStyle.transform).toEqual('rotate(135deg) translate(-50%, -50%)');
     expect(glareStyle.opacity).toEqual('0.85');
   });
